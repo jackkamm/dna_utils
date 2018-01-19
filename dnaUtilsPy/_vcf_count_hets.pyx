@@ -17,8 +17,8 @@ def count_hets(vcf_name):
 
     cdef int[::1] nhet = np.zeros([nsmpl], dtype=np.intc)
     cdef int[::1] nmiss = np.zeros([nsmpl], dtype=np.intc)
-    cdef int[::1] ntot = np.zeros([1], dtype=np.intc)
-    vcfcounthets(fp, hdr, nsmpl, &nhet[0], &nmiss[0], &ntot[0])
+    cdef int ntot = 0
+    vcfcounthets(fp, hdr, nsmpl, &nhet[0], &nmiss[0], &ntot)
 
     bcf_hdr_destroy(hdr)
     hts_close(fp)
@@ -26,6 +26,6 @@ def count_hets(vcf_name):
     n_hets=np.asarray(nhet)
     n_missing=np.asarray(nmiss)
     return {"samples": samples,
-            "n_hets": list(n_hets),
-            "n_missing": list(n_missing),
-            "total": ntot[0]}
+            "n_hets": n_hets.tolist(),
+            "n_missing": n_missing.tolist(),
+            "total": ntot}
