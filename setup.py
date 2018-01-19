@@ -1,20 +1,28 @@
 import os
+import glob
 import numpy
 from setuptools import setup, Extension
 import pysam
 
-extensions = [
-    Extension(
-        "dnaUtilsPy.vcf_pairwise_diffs",
-        sources=["dnaUtilsPy/vcf_pairwise_diffs.pyx",
-                 "src/vcfpairdiffs.c"],
-        include_dirs=pysam.get_include() + [
-            "src", numpy.get_include()],
-        extra_link_args=pysam.get_libraries()),
-]
+src_list = glob.glob("src/*.c")
+pyx_list = glob.glob("dnaUtilsPy/*.pyx")
+include_dirs = pysam.get_include() + ["src", numpy.get_include()]
+extra_link_args = pysam.get_libraries()
 
-setup(name="dnaUtilsPy",
-	  packages=["dnaUtilsPy"],
-      ext_modules=extensions,
-      install_requires=['numpy', 'pysam'],
-      setup_requires=['numpy', 'pysam', 'cython'])
+extensions = []
+for pyx in pyx_list:
+    assert pyx.endswith(".pyx")
+    submodule = os.path.basename(pyx)[:-len(".pyx")]
+    extensions.append(
+        Extension(
+            "dnaUtilsPy." + submodule,
+            sources=[pyx] + src_list,
+            include_dirs=include_dirs,
+            extra_link_args=extra_link_args))
+
+setup(
+    name="dnaUtilsPy",
+    packages=["dnaUtilsPy"],
+    ext_modules=extensions,
+    install_requires=['numpy', 'pysam'],
+    setup_requires=['numpy', 'pysam', 'cython'])
