@@ -1,6 +1,6 @@
 #include <ctype.h>
 #include <string.h>
-#include "vcfGetTv.h"
+#include "dna_utils.h"
 
 void vcfGetTv(const char *in_vcf, const char *out_vcf){
   htsFile *in_fp = hts_open(in_vcf, "r");

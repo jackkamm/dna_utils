@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 import pysam
-import dnaUtilsPy.vcf_count_hets
+import dnaUtilsPy.vcf
 
 
 def _py_count_hets(vcf_name):
@@ -35,7 +35,7 @@ def _py_count_hets(vcf_name):
 def test_vcf_count_hets():
     dired = os.path.dirname(os.path.realpath(__file__))
     vcf = os.path.join(dired, "test.vcf")
-    het_counts1 = dnaUtilsPy.vcf_count_hets.count_hets(vcf)
+    het_counts1 = dnaUtilsPy.vcf.count_hets(vcf)
     het_counts2 = _py_count_hets(vcf)
     assert het_counts1.equals(het_counts2)
     assert het_counts1.equals(

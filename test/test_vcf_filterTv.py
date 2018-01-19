@@ -1,7 +1,7 @@
 import os
 import tempfile
 import pysam
-from dnaUtilsPy.vcf_get_Tv import get_Tv
+from dnaUtilsPy.vcf import get_Tv
 
 def _get_Tv(in_vcf, out_vcf):
     bcf_in = pysam.VariantFile(in_vcf)

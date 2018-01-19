@@ -1,6 +1,6 @@
-#include "vcfcounthets.h"
+#include "dna_utils.h"
 
-void vcfcounthets(htsFile *fp, bcf_hdr_t *hdr, int nsmpl, int* nhet, int* nmiss, int* ntot){
+void vcfCountHets(htsFile *fp, bcf_hdr_t *hdr, int nsmpl, int* nhet, int* nmiss, int* ntot){
   int i,ii,ngt,max_ploidy;
   int32_t *iptr, *gt_arr = NULL, ngt_arr = 0;
   bcf1_t *line = bcf_init();

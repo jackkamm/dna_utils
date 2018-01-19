@@ -1,6 +1,6 @@
-#include "vcfpairdiffs.h"
+#include "dna_utils.h"
 
-void vcfpairdiffs(htsFile *fp, bcf_hdr_t *hdr,
+void vcfPairDiffs(htsFile *fp, bcf_hdr_t *hdr,
                     int nsmpl, int* ndiff, int* ntot) {
   int i, j, ii, jj, iAllele, jAllele, ngt;
   int32_t *iptr, *jptr, ismpl, jsmpl, *gt_arr = NULL, ngt_arr = 0;

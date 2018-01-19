@@ -1,8 +1,8 @@
 import os
-from dnaUtilsPy.zip_vcf_fasta import zip_vcf_fasta
+from dnaUtilsPy.vcf import zip_fasta
 
-outdir = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                      "test_zip_vcf_fasta.d")
+outdir = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), "test_zip_vcf_fasta.d")
 
 expected1 = """##fileformat=VCFv4.2
 ##FILTER=<ID=PASS,Description="All filters passed">
@@ -36,16 +36,17 @@ expected1 = """##fileformat=VCFv4.2
 20	8	.	G	A	29	PASS	NS=3;DP=99;AF=0.5;DB;H2	GT	0|0	1|0	1/1	.	1
 """
 
+
 def test_zip_vcf_fasta():
     outfile = os.path.join(outdir, "out.vcf")
     if os.path.exists(outfile):
         os.remove(outfile)
-    zip_vcf_fasta(os.path.join(outdir, "test.vcf"),
-                  outfile,
-                  [os.path.join(outdir, "fa1.fa"),
-                   os.path.join(outdir, "fa2.fa")],
-                  ["new1", "new2"])
+    zip_fasta(
+        os.path.join(outdir, "test.vcf"), outfile,
+        [os.path.join(outdir, "fa1.fa"),
+         os.path.join(outdir, "fa2.fa")], ["new1", "new2"])
     assert "".join(open(outfile)) == expected1
+
 
 expected2 = """##fileformat=VCFv4.2
 ##FILTER=<ID=PASS,Description="All filters passed">
@@ -79,13 +80,15 @@ expected2 = """##fileformat=VCFv4.2
 20	8	.	G	A	29	PASS	NS=3;DP=99;AF=0.5;DB;H2	GT	0|0	1|0	1/1	.	1
 """
 
+
 def test_zip_vcf_fasta2():
     outfile = os.path.join(outdir, "out2.vcf")
     if os.path.exists(outfile):
         os.remove(outfile)
-    zip_vcf_fasta(os.path.join(outdir, "test.vcf"),
-                  outfile,
-                  [os.path.join(outdir, "fa1.fa"),
-                   os.path.join(outdir, "fa2.fa")],
-                  ["new1", "new2"], skip_lower=False)
+    zip_fasta(
+        os.path.join(outdir, "test.vcf"),
+        outfile,
+        [os.path.join(outdir, "fa1.fa"),
+         os.path.join(outdir, "fa2.fa")], ["new1", "new2"],
+        skip_lower=False)
     assert "".join(open(outfile)) == expected2
