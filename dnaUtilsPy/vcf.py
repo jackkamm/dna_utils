@@ -6,9 +6,9 @@ import and the command-line.
 import sys
 import argparse
 
-from ._extensions import pairwise_diffs, count_hets, get_Tv
+from ._extensions import pairwise_diffs, count_hets, get_Tv  # noqa: F401
 
-from .zip_vcf_fasta import zip_vcf_fasta as zip_fasta
+from .zip_vcf_fasta import zip_vcf_fasta as zip_fasta  # noqa: F401
 
 # python -m dnaUtilsPy.vcf (function) [args]
 if __name__ == "__main__":
