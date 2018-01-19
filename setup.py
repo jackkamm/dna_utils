@@ -5,8 +5,8 @@ import pysam
 
 extensions = [
     Extension(
-        "dnaUtilsPy.vcf_pairwise_diffs.wrapper",
-        sources=["dnaUtilsPy/vcf_pairwise_diffs/wrapper.pyx",
+        "dnaUtilsPy.vcf_pairwise_diffs",
+        sources=["dnaUtilsPy/vcf_pairwise_diffs.pyx",
                  "src/vcfpairdiffs.c"],
         include_dirs=pysam.get_include() + [
             "src", numpy.get_include()],
@@ -14,7 +14,7 @@ extensions = [
 ]
 
 setup(name="dnaUtilsPy",
-	  packages=["dnaUtilsPy", "dnaUtilsPy.vcf_pairwise_diffs"],
+	  packages=["dnaUtilsPy"],
       ext_modules=extensions,
       install_requires=['numpy', 'pysam'],
       setup_requires=['numpy', 'pysam', 'cython'])
