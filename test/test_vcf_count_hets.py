@@ -13,7 +13,11 @@ def _py_count_hets(vcf_name):
 
     n_hets = np.zeros(len(samples), dtype=int)
     n_missing = np.zeros(len(samples), dtype=int)
+    total = 0
     for rec in bcf_in.fetch():
+        if "GT" not in rec.format:
+            continue
+        total += 1
         for i in range(len(samples)):
             s = rec.samples[i]
             ai = s.allele_indices
@@ -26,7 +30,8 @@ def _py_count_hets(vcf_name):
     return {
         "samples": list(samples),
         "n_hets": list(n_hets),
-        "n_missing": list(n_missing)
+        "n_missing": list(n_missing),
+        "total": total,
     }
 
 
@@ -39,5 +44,6 @@ def test_vcf_count_hets():
     assert het_counts1 == {
         'samples': ['NA00001', 'NA00002', 'NA00003'],
         'n_hets': [0, 3, 0],
-        'n_missing': [0, 0, 3]
+        'n_missing': [0, 0, 3],
+        "total": 6
     }

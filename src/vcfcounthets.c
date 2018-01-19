@@ -1,6 +1,6 @@
 #include "vcfcounthets.h"
 
-void vcfcounthets(htsFile *fp, bcf_hdr_t *hdr, int nsmpl, int* nhet, int* nmiss){
+void vcfcounthets(htsFile *fp, bcf_hdr_t *hdr, int nsmpl, int* nhet, int* nmiss, int* ntot){
   int i,ii,ngt,max_ploidy;
   int32_t *iptr, *gt_arr = NULL, ngt_arr = 0;
   bcf1_t *line = bcf_init();
@@ -9,6 +9,7 @@ void vcfcounthets(htsFile *fp, bcf_hdr_t *hdr, int nsmpl, int* nhet, int* nmiss)
       // note this uses realloc, so free gt_arr after the loop
       ngt = bcf_get_genotypes(hdr, line, &gt_arr, &ngt_arr);
       if ( ngt <= 0) continue; // GT not present
+      (*ntot)++;
       max_ploidy = ngt/nsmpl;
       for (i=0; i<nsmpl; i++) {
         iptr = gt_arr + i*max_ploidy;

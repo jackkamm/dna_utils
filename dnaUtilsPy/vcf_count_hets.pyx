@@ -4,7 +4,7 @@ import numpy as np
 from pysam.libchtslib cimport htsFile, hts_open, hts_close, bcf_hdr_t, bcf_hdr_read, bcf_hdr_nsamples, bcf_hdr_destroy
 
 cdef extern from "vcfcounthets.h":
-    void vcfcounthets(htsFile *fp, bcf_hdr_t *hdr, int nsmpl, int* nhet, int* nmiss);
+    void vcfcounthets(htsFile *fp, bcf_hdr_t *hdr, int nsmpl, int* nhet, int* nmiss, int* ntot);
 
 def count_hets(vcf_name):
     vcf_name = vcf_name.encode()
@@ -17,7 +17,8 @@ def count_hets(vcf_name):
 
     cdef int[::1] nhet = np.zeros([nsmpl], dtype=np.intc)
     cdef int[::1] nmiss = np.zeros([nsmpl], dtype=np.intc)
-    vcfcounthets(fp, hdr, nsmpl, &nhet[0], &nmiss[0])
+    cdef int[::1] ntot = np.zeros([1], dtype=np.intc)
+    vcfcounthets(fp, hdr, nsmpl, &nhet[0], &nmiss[0], &ntot[0])
 
     bcf_hdr_destroy(hdr)
     hts_close(fp)
@@ -26,4 +27,5 @@ def count_hets(vcf_name):
     n_missing=np.asarray(nmiss)
     return {"samples": samples,
             "n_hets": list(n_hets),
-            "n_missing": list(n_missing)}
+            "n_missing": list(n_missing),
+            "total": ntot[0]}
