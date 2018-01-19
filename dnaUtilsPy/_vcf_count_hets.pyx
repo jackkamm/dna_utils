@@ -1,5 +1,6 @@
 cimport numpy as np
 import numpy as np
+import pandas as pd
 
 from pysam.libchtslib cimport htsFile, hts_open, hts_close, bcf_hdr_t, bcf_hdr_read, bcf_hdr_nsamples, bcf_hdr_destroy
 
@@ -25,7 +26,6 @@ def count_hets(vcf_name):
 
     n_hets=np.asarray(nhet)
     n_missing=np.asarray(nmiss)
-    return {"samples": samples,
-            "n_hets": n_hets.tolist(),
-            "n_missing": n_missing.tolist(),
-            "total": ntot}
+    n_hom = ntot - n_hets - n_missing
+    return pd.DataFrame(list(zip(samples, n_hets, n_hom, n_missing)),
+                        columns=["Samples", "Hets", "Homs", "Missing"])

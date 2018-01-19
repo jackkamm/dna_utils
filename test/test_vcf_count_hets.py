@@ -1,7 +1,6 @@
 import os
-import ast
-import pprint
 import numpy as np
+import pandas as pd
 import pysam
 import dnaUtilsPy.vcf_count_hets
 
@@ -27,23 +26,24 @@ def _py_count_hets(vcf_name):
                 continue
             elif len(ai_set) > 1:
                 n_hets[i] += 1
-    return {
-        "samples": list(samples),
-        "n_hets": list(n_hets),
-        "n_missing": list(n_missing),
-        "total": total,
-    }
+    n_hom = total - n_hets - n_missing
+    return pd.DataFrame(
+        list(zip(samples, n_hets, n_hom, n_missing)),
+        columns=["Samples", "Hets", "Homs", "Missing"])
 
 
 def test_vcf_count_hets():
     dired = os.path.dirname(os.path.realpath(__file__))
     vcf = os.path.join(dired, "test.vcf")
-    het_counts1 = _py_count_hets(vcf)
-    het_counts2 = dnaUtilsPy.vcf_count_hets.count_hets(vcf)
-    assert het_counts1 == het_counts2
-    assert het_counts1 == {
-        'samples': ['NA00001', 'NA00002', 'NA00003'],
-        'n_hets': [0, 3, 0],
-        'n_missing': [0, 0, 3],
-        "total": 6
-    }
+    het_counts1 = dnaUtilsPy.vcf_count_hets.count_hets(vcf)
+    het_counts2 = _py_count_hets(vcf)
+    assert het_counts1.equals(het_counts2)
+    assert het_counts1.equals(
+        pd.DataFrame(
+            {
+                'Samples': ['NA00001', 'NA00002', 'NA00003'],
+                'Hets': [0, 3, 0],
+                "Homs": [6, 3, 3],
+                'Missing': [0, 0, 3]
+            },
+            columns=["Samples", "Hets", "Homs", "Missing"]))
