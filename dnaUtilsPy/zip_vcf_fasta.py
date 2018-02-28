@@ -2,7 +2,8 @@ import pysam
 
 # TODO rewrite in C because this uses buggy/unstable parts of pysam
 def zip_vcf_fasta(in_vcf, out_vcf, fasta_paths, sample_names,
-                  skip_lower=True, fasta_chrom_names=None):
+                  vcf_chrom=None, fasta_chrom_list=None,
+                  skip_lower=True):
     """
     Adds samples from fasta to VCF at positions in the VCF.
     Currently this discards all sample info aside from GT.
@@ -25,22 +26,28 @@ def zip_vcf_fasta(in_vcf, out_vcf, fasta_paths, sample_names,
     elif skip_lower is False:
         skip_lower = [False]*len(fastas)
 
-    if not fasta_chrom_names:
-        fasta_chrom_names = [{} for _ in range(len(fastas))]
+    if not fasta_chrom_list:
+        fasta_chrom_list = [None for _ in range(len(fastas))]
+    elif not vcf_chrom:
+        raise ValueError("vcf_chrom required")
 
     assert len(skip_lower) == len(fastas)
-    assert len(fasta_chrom_names) == len(fastas)
+    assert len(fasta_chrom_list) == len(fastas)
 
-    for rec in bcf_in.fetch():
+    new_gts = []
+    for rec in bcf_in.fetch(vcf_chrom):
         alleles = [a.upper() for a in rec.alleles]
         # new_record() doesn't work with 1 allele
         if len(alleles) < 2:
             continue
 
-        new_gts = []
-        for f, sl, chrom_name_dict in zip(
-                fastas, skip_lower, fasta_chrom_names):
-            chrom = chrom_name_dict.get(rec.chrom, rec.chrom)
+        new_gts.clear()
+        for f, sl, fasta_chrom in zip(
+                fastas, skip_lower, fasta_chrom_list):
+            if fasta_chrom:
+                chrom = fasta_chrom
+            else:
+                chrom = rec.chrom
             raw_gt = f.fetch(chrom, rec.start, rec.stop)
             if not sl:
                 raw_gt = raw_gt.upper()
